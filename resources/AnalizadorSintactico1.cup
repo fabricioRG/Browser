@@ -1,0 +1,321 @@
+package browser.backend.analizadores;
+
+import java_cup.runtime.*;
+import browser.backend.analizadores.*;
+import browser.backend.manejadores.*;
+import java.awt.Color;
+import browser.frontend.objects.*;
+
+parser code {:
+
+	private ManejadorParser1 mp = null;
+
+	// Connect this parser to a scanner!
+	public parser1(Lexer1 lex, ManejadorParser1 mp) {
+		super(lex);
+		this.mp = mp;
+	}
+
+        public void syntax_error(Symbol s) {
+            System.out.println("Error R de sintaxis: "+ s.value +" Linea "+(s.left)+" columna "+(s.right));
+        }
+
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal String         SIGNO_IGUAL, A_TILDE, E_TILDE, I_TILDE, O_TILDE, U_TILDE;
+terminal String 		N_TILDE_MAY, N_TILDE_MIN, MENOR, MAYOR, HTML_AB, HTML_CE;
+terminal String 		HEAD_AB, HEAD_CE, TITLE_AB, TITLE_CE, BODY_AB, BODY_CE;
+terminal String 		PARRAFO_AB, PARRAFO_CE, SALTO_LINEA, BG_COLOR, TEXT, LINK;
+terminal String 		CENTRADO_AB, CENTRADO_CE, ALIGN, LEFT, RIGHT, CENTER;
+terminal String 		JUSTIFIED, NEGRILLA_AB, NEGRILLA_CE, SUBRAYADO_AB, SUBRAYADO_CE;
+terminal String 		ITALICA_AB, ITALICA_CE, TACHADO_AB, TACHADO_CE, SUBINDICE_AB;
+terminal String 		SUBINDICE_CE, FONT_AB, FONT_CE, SIZE, FACE, LIST_DES_AB;
+terminal String 		LIST_DES_CE, LIST_ORD_AB, LIST_ORD_CE, ITEM, TYPE, START;
+terminal String 		NOBR_AB, NOBR_CE, LINE_HOR_AB, WIDTH, CODIGO_EMBEBIDO;
+terminal String 		SANGRIA_AB, SANGRIA_CE, ENLACE_AB, ENLACE_CE, NAME, HREF;
+terminal String 		CIERRE, ENLACE, CIRCLE, SQUARE, DISC, ENTERO_UNO, HEXADECIMAL;
+terminal String 		MAY, MIN, TAMANO, ANCHO_PANTALLA, TEXTO_PLANO, PARAMETRO;
+terminal String 		SUPERINDICE_AB, SUPERINDICE_CE, PARPADEANTE_AB, PARPADEANTE_CE;
+terminal String 		BLACK, OLIVE, TEAL, RED, BLUE, MAROON, NAVY, GRAY, LIME, FUCHSIA;
+terminal String 		GREEN, WHITE, PURPLE, SILVER, YELLOW, AQUA, COLOR;
+
+non terminal String 	html, head, texto, texto1 , atributos1;
+non terminal String 	palabraReserv, simbolo, size1, codigoEmbebido;
+non terminal String 	title;
+non terminal String 	face1, listaOrdenada, atributosOr, type, type1, star, items;
+non terminal String 	item, listaDesordenada, atributosDe, type2;
+non terminal Integer 	alignAux, align1, alignAux1, atributosPa;
+non terminal Color 		color, bgcolor, link, text, color1;
+non terminal Elemento 	body1, elemento1, elementoRsv, elementoSimple;
+non terminal Centrado 	centrado;
+non terminal Parrafo 	parrafo;
+non terminal TipoLetra 	tipoLetra;
+non terminal Estilo 	estilo;
+non terminal SaltoLinea cambioLinea;
+non terminal Sangria 	sangria;
+non terminal Body 		body, atributos;
+non terminal TipoLetra 	atributosFo1, atributosFo;
+non terminal Enlace 	enlaces;
+non terminal TextoNoLinea  		textoNoLinea;
+non terminal LineaHorizontal 	atributosLine1, atributosLine2, lineaHorizontal, widthAux, width1;
+
+start with html;
+
+/* INICIO GRAMATICA DE -----HTML----- */
+
+html ::= 			HTML_AB head body:e HTML_CE {:mp.procesarBody(e);:}
+					| HTML_AB body:e HTML_CE {:mp.procesarBody(e);:}
+					| HTML_AB HTML_CE
+					;
+
+head ::= 			HEAD_AB title HEAD_CE
+					| HEAD_AB HEAD_CE
+					;
+
+title ::= 			TITLE_AB texto1 TITLE_CE
+					;
+
+texto ::=			TEXTO_PLANO:e {:RESULT = e;:}
+					| palabraReserv:e {:RESULT = e;:}
+					;
+
+texto1 ::= 			texto1:e1 texto:e2 {:RESULT = e1 + " " + e2;:}
+					| texto:e {:RESULT = e;:}
+					;
+
+palabraReserv ::=  	BG_COLOR:e {:RESULT = e;:}
+					| TEXT:e {:RESULT = e;:}
+					| HEXADECIMAL:e {:RESULT = e;:}
+					| ALIGN:e {:RESULT = e;:}
+					| LEFT:e {:RESULT = e;:}
+					| RIGHT:e {:RESULT = e;:}
+					| JUSTIFIED:e {:RESULT = e;:}
+					| CENTER:e {:RESULT = e;:}
+					| PARAMETRO:e {:RESULT = e;:}
+					| TAMANO:e {:RESULT = e;:}
+					| SIZE:e {:RESULT = e;:}
+					| FACE:e {:RESULT = e;:}
+					| TYPE:e {:RESULT = e;:}
+					| START:e {:RESULT = e;:}
+					| NAME:e {:RESULT = e;:}
+					| HREF:e {:RESULT = e;:}
+					| ENLACE:e {:RESULT = e;:}
+					| SQUARE:e {:RESULT = e;:}
+					| CIRCLE:e {:RESULT = e;:}
+					| DISC:e {:RESULT = e;:}
+					| ENTERO_UNO:e {:RESULT = e;:}
+					| MAY:e {:RESULT = e;:}
+					| MIN:e {:RESULT = e;:}
+					| ANCHO_PANTALLA:e {:RESULT = e;:}
+					| SIGNO_IGUAL:e {:RESULT = e;:}
+					;
+
+body ::= 			BODY_AB atributos:e1 CIERRE body1:e2 BODY_CE {:RESULT = mp.getBody(2, e2, e1);:}
+					| BODY_AB CIERRE body1:e BODY_CE {:RESULT = mp.getBody(1, e, null);:}
+					;
+
+atributos ::= 		bgcolor:e1 text:e2 link:e3 {:RESULT = mp.addAtributosBody(e1, e2, e3);:}
+					| bgcolor:e1 text:e2 {:RESULT = mp.addAtributosBody(e1, e2, null);:}
+					| bgcolor:e1 link:e2 {:RESULT = mp.addAtributosBody(e1, null, e2);:}
+					| text:e1 link:e2 {:RESULT = mp.addAtributosBody(null, e1, e2);:}
+					| bgcolor:e {:RESULT = mp.addAtributosBody(e, null, null);:}
+					| text:e {:RESULT = mp.addAtributosBody(null, e, null);:}
+					| link:e {:RESULT = mp.addAtributosBody(null, null, e);:}
+					;
+
+bgcolor ::= 		BG_COLOR SIGNO_IGUAL color:e {:RESULT = e;:}
+					;
+
+text ::= 			TEXT SIGNO_IGUAL color:e {:RESULT = e;:}
+					;
+
+link ::= 			LINK SIGNO_IGUAL color:e {:RESULT = e;:}
+					;
+
+color ::= 			HEXADECIMAL:e {:RESULT = mp.getColor(e);:}
+					| BLACK {:RESULT = mp.decodeColor("#000000");:}
+					| OLIVE {:RESULT = mp.decodeColor("#808000");:}
+					| TEAL {:RESULT = mp.decodeColor("#008080");:}
+					| RED {:RESULT = mp.decodeColor("#ff0000");:}
+					| BLUE {:RESULT = mp.decodeColor("#0000ff");:}
+					| MAROON {:RESULT = mp.decodeColor("#800000");:}
+					| NAVY {:RESULT = mp.decodeColor("#000080");:}
+					| GRAY {:RESULT = mp.decodeColor("#d3d3d3");:}
+					| LIME {:RESULT = mp.decodeColor("#bfff00");:}
+					| FUCHSIA {:RESULT = mp.decodeColor("#ca2c92");:}
+					| GREEN {:RESULT = mp.decodeColor("#00ff00");:}
+					| WHITE {:RESULT = mp.decodeColor("#0000ff");:}
+					| PURPLE {:RESULT = mp.decodeColor("#800080");:}
+					| SILVER {:RESULT = mp.decodeColor("#c0c0c0");:}
+					| YELLOW {:RESULT = mp.decodeColor("#ffff00");:}
+					| AQUA {:RESULT = mp.decodeColor("#00ffff");:}
+					;
+
+body1 ::= 			elemento1:e {:RESULT = e;:}
+					;
+
+elemento1 ::= 		elemento1:e1 elementoRsv:e2 {:RESULT = mp.getElemento(e1, e2);:}
+					| elementoRsv:e {:RESULT = e;:}
+					;
+
+elementoRsv ::=		elementoSimple:e {:RESULT = e;:}
+					| centrado:e {:RESULT = mp.setCentrado(e);:}
+					| parrafo:e {:RESULT = mp.setParrafo(e);:}
+					| tipoLetra:e {:RESULT = mp.setTipoLetra(e);:}
+					| listaOrdenada:e 
+					| listaDesordenada:e 
+					; 
+
+elementoSimple ::= 	estilo:e {:RESULT = mp.setEstilo(e);:}
+					| cambioLinea:e {:RESULT = mp.setSaltoLinea(e);:}
+					| textoNoLinea:e {:RESULT = mp.setTextoNoLinea(e);:}
+					| lineaHorizontal:e {:RESULT = mp.setLineaHorizontal(e);:}
+					| texto:e {:RESULT = mp.setTexto(e);:}
+					| simbolo:e {:RESULT = mp.setTexto(e);:}
+					| sangria:e {:RESULT = mp.setSangria(e);:}
+					| enlaces:e {:RESULT = mp.setEnlace(e);:}
+					| codigoEmbebido:e
+					;
+
+estilo ::= 			NEGRILLA_AB texto1:e NEGRILLA_CE {:RESULT = mp.getEstilo(1, e);:}
+					| SUBRAYADO_AB texto1:e SUBRAYADO_CE {:RESULT = mp.getEstilo(2, e);:}
+					| ITALICA_AB texto1:e ITALICA_CE {:RESULT = mp.getEstilo(3, e);:}
+					| TACHADO_AB texto1:e TACHADO_CE {:RESULT = mp.getEstilo(4, e);:}
+					| PARPADEANTE_AB texto1:e PARPADEANTE_CE {:RESULT = mp.getEstilo(1, e);:}
+					| SUBINDICE_AB texto1:e SUBINDICE_CE {:RESULT = mp.getEstilo(5, e);:}
+					| SUPERINDICE_AB texto1:e SUPERINDICE_CE {:RESULT = mp.getEstilo(6, e);:}
+					;
+
+cambioLinea ::= 	SALTO_LINEA {:RESULT = mp.getSaltoLinea();:}
+					;
+
+textoNoLinea ::= 	NOBR_AB texto1:e NOBR_CE {:RESULT = mp.getTextoNoLinea(e);:}
+					;
+
+lineaHorizontal::=	LINE_HOR_AB atributosLine1:e CIERRE {:RESULT = mp.getLineaHorizontal(e);:}
+					| LINE_HOR_AB CIERRE {:RESULT = mp.getLineaHorizontal(4,null);:}
+					;
+
+atributosLine1 ::= 	atributosLine1:e1 atributosLine2:e2 {:RESULT = mp.addAtributosLineHor(e1, e2);:}
+					| atributosLine2:e {:RESULT = e;:}
+					;
+
+atributosLine2 ::=	align1:e {:RESULT = new LineaHorizontal(e, 0, 0, 0);:}
+					| width1:e {:RESULT = e;:}
+					| size1:e {:RESULT = mp.getLineaHorizontal(3, e);:}
+					;
+
+align1 ::= 			ALIGN SIGNO_IGUAL alignAux:e {:RESULT = e;:}
+					;
+
+alignAux ::= 		RIGHT:e {:RESULT = 1;:}
+					|LEFT:e {:RESULT = 2;:}
+					| CENTER:e {:RESULT = 3;:}
+					;
+
+simbolo ::= 		A_TILDE {:RESULT = "á";:}
+					| E_TILDE {:RESULT = "é";:}
+					| I_TILDE {:RESULT = "í";:}
+					| O_TILDE {:RESULT = "ó";:}
+					| U_TILDE {:RESULT = "ú";:}
+					| N_TILDE_MAY {:RESULT = "Ñ";:}
+					| N_TILDE_MIN {:RESULT = "ñ";:}
+					| MENOR {:RESULT = "<";:}
+					| MAYOR {:RESULT = ">";:}
+					;
+
+width1 ::= 			WIDTH SIGNO_IGUAL widthAux:e {:RESULT = e;:}
+					;
+
+widthAux ::= 		TAMANO:e {:RESULT = mp.getLineaHorizontal(1, e);:}
+					| ANCHO_PANTALLA:e {:RESULT = mp.getLineaHorizontal(2, e);:}
+					;
+
+size1 ::= 			SIZE SIGNO_IGUAL TAMANO:e {:RESULT = e;:}
+					;
+
+sangria ::= 		SANGRIA_AB texto1:e SANGRIA_CE {:RESULT = mp.getSangria(e);:}
+					;
+
+enlaces ::= 		ENLACE_AB NAME SIGNO_IGUAL PARAMETRO CIERRE texto1 ENLACE_CE
+					| ENLACE_AB HREF SIGNO_IGUAL ENLACE CIERRE texto1 ENLACE_CE
+					;
+
+centrado ::= 		CENTRADO_AB elemento1:e CENTRADO_CE {:RESULT = mp.getCentrado(e);:}
+					;
+
+parrafo ::= 		PARRAFO_AB atributosPa:e1 CIERRE elemento1:e2 PARRAFO_CE {:RESULT = mp.getParrafo(e1, e2);:}
+					| PARRAFO_AB CIERRE elemento1:e PARRAFO_CE {:RESULT = mp.getParrafo(0, e);:}
+					;
+
+tipoLetra ::= 		FONT_AB atributosFo:e1 CIERRE elemento1:e2 FONT_CE {:RESULT = mp.getTipoLetra(e1, e2);:}
+					| FONT_AB CIERRE elemento1:e FONT_CE {:RESULT = mp.getTipoLetra(null, e);:}
+					;
+
+atributosPa ::= 	ALIGN SIGNO_IGUAL alignAux1:e {:RESULT = e;:}
+					;
+
+alignAux1 ::= 		alignAux:e {:RESULT = e;:}
+					| JUSTIFIED {:RESULT = 4;:}
+					;
+
+atributosFo ::= 	atributosFo:e1 atributosFo1:e2 {:RESULT = mp.addAtributosTipoLetra(e1, e2);:} 
+					| atributosFo1:e {:RESULT = e;:}
+					;
+
+atributosFo1 ::= 	size1:e {:RESULT = new TipoLetra(Integer.parseInt(e.substring(1, e.length() -1 )), 0, null, null, null);:}
+					| align1:e {:RESULT = new TipoLetra(0, e, null, null, null);:}
+					| face1:e {:RESULT = new TipoLetra(0, 0, e, null, null);:}
+					| color1:e {:RESULT = new TipoLetra(0, 0, null, e, null);:}
+					;
+
+face1 ::= 			FACE SIGNO_IGUAL PARAMETRO:e {:RESULT = mp.getFace(e);:}//String
+					;
+
+
+color1 ::= 			COLOR SIGNO_IGUAL color:e {:RESULT = e;:}
+					;
+
+listaOrdenada ::= 	LIST_ORD_AB atributosOr CIERRE items LIST_ORD_CE
+					| LIST_ORD_AB CIERRE items LIST_ORD_CE
+					;
+
+atributosOr ::= 	type star
+					| star type
+					| type
+					| star
+					;
+
+type ::= 			TYPE SIGNO_IGUAL type1
+					;
+
+type1 ::= 			ENTERO_UNO
+					| MAY
+					| MIN
+					;
+
+star ::= 			START SIGNO_IGUAL TAMANO
+					;
+
+items ::= 			items item
+					| item
+					;
+
+item ::= 			ITEM elemento1
+					;
+
+listaDesordenada ::=LIST_DES_AB atributosDe CIERRE items LIST_DES_CE
+					| LIST_DES_AB CIERRE items LIST_DES_CE
+					;
+
+atributosDe ::= 	TYPE SIGNO_IGUAL type2
+					;
+
+type2 ::= 			CIRCLE
+					| SQUARE
+					| DISC
+					;
+
+codigoEmbebido ::= 	CODIGO_EMBEBIDO:e {:mp.runEmbebido(e);:}
+					;
