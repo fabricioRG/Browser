@@ -6,7 +6,7 @@ import java.awt.Color;
  *
  * @author fabricio
  */
-public class Atributos {
+public class Atributos implements Cloneable{
 
     private int alineacion;
     private int estilo;
@@ -26,6 +26,10 @@ public class Atributos {
         this.font = font;
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+    
     public int getAlineacion() {
         return alineacion;
     }

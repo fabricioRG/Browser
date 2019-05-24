@@ -19,7 +19,7 @@ public class ManejadorParser1 {
     public static int FIN_SUBSTRING = 7;
     public static int DEFAULT_ALIGN = 2;
     public static int DEFAULT_WIDTH_PIXEL = 10;
-    public static int DEFAULT_SIZE = 10;
+    public static int DEFAULT_SIZE = 15;
     public static Color DEFAULT_TEXT_COLOR = Color.BLACK;
     public static Color DEFAULT_BG_COLOR = Color.WHITE;
     public static String DEFAULT_FONT = "Noto Sans";
@@ -32,7 +32,7 @@ public class ManejadorParser1 {
 
     public ManejadorParser1(ManejadorAreaTexto mat) {
         this.mat = mat;
-        atributos = new Atributos(DEFAULT_ALIGN, DEFAULT_STYLE, DEFAULT_BG_COLOR, 
+        atributos = new Atributos(DEFAULT_ALIGN, DEFAULT_STYLE, DEFAULT_BG_COLOR,
                 DEFAULT_TEXT_COLOR, DEFAULT_TEXT_COLOR, DEFAULT_SIZE, DEFAULT_FONT);
     }
 
@@ -256,127 +256,89 @@ public class ManejadorParser1 {
     public void procesarBody(Body body) {
         Elemento element = body.getEtiquetas();
         mat.getAt().getNavegador().setBackground(body.getBgColor());
+        atributos.setBgColor(body.getBgColor());
         mat.getAt().getNavegador().setForeground(body.getText());
+        atributos.setTextColor(body.getText());
         colorLink = body.getLink();
-        String texto = "";
-        while (element != null) {
-            switch (element.getIndice()) {
-                case 1:
-                    mat.mostrarTexto(texto, atributos);
-                    texto = "";
-                    System.out.println("<<Centrado");
-                    procesarElemento(element.getCentrado().getEtiquetas());
-                    finProceso(element);
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    atributos.setEstilo(element.getEstilo().getStyle());
-                    mat.mostrarTexto(texto, atributos);
-                    atributos.setEstilo(DEFAULT_STYLE);
-                    texto = "";
-                    System.out.println(element.getEstilo().getTexto());
-                    break;
-                case 4:
-                    System.out.println("Linea horizontal");
-                    break;
-                case 5:
-                    mat.mostrarTexto(texto, atributos);
-                    texto = "";
-                    System.out.println("<<Parrafo");
-                    System.out.println(element.getParrafo().getAlineacion());
-                    procesarElemento(element.getParrafo().getEtiquetas());
-                    finProceso(element);
-                    break;
-                case 6:
-                    System.out.println("Salto de linea");
-                    break;
-                case 7:
-                    System.out.println("Sangria");
-                    mat.mostrarTexto(texto, atributos);
-                    texto = "";
-                    texto +=  SALTO_LINEA + element.getSangria().getTexto() + ESPACIO;
-                    
-                    break;
-                case 8:
-                    System.out.println("<Nobr> " + element.getTextoNoLinea().getTexto());
-                    texto += element.getTextoNoLinea().getTexto() + ESPACIO;
-                    break;
-                case 9:
-                    mat.mostrarTexto(texto, atributos);
-                    texto = "";
-                    System.out.println("<<Tipo Letra");
-                    System.out.println(element.getTipoLetra().getAlign());
-                    System.out.println(element.getTipoLetra().getColor());
-                    System.out.println(element.getTipoLetra().getFace());
-                    System.out.println(element.getTipoLetra().getSize());
-                    procesarElemento(element.getTipoLetra().getEtiquetas());
-                    finProceso(element);
-                    break;
-                case 10:
-                    System.out.println(element.getTexto());
-                    texto += element.getTexto() + ESPACIO;
-                    break;
-            }
-            element = element.getSiguienteEtiqueta();
-        }
-        System.out.println(body.getBgColor());
+        procesarElemento(element, "", atributos);
     }
 
-    public void procesarElemento(Elemento elemento) {
+    public void procesarElemento(Elemento elemento, String text, Atributos at) {
         Elemento element = elemento;
-        String texto = "";
+        String texto = text;
         while (element != null) {
             switch (element.getIndice()) {
                 case 1:
-                    mat.mostrarTexto(texto, atributos);
-                    texto = SALTO_LINEA;
-                    System.out.println("<<Centrado");
-                    procesarElemento(element.getCentrado().getEtiquetas());
+                    mat.mostrarTexto(texto, at);
+                    texto = "";
+                    try {
+                        Atributos at2 = (Atributos) at.clone();
+                        at2.setAlineacion(3);
+                        procesarElemento(element.getCentrado().getEtiquetas(), SALTO_LINEA, at2);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                    if (element.getSiguienteEtiqueta() != null) {
+                        int indice = element.getSiguienteEtiqueta().getIndice();
+                        if (indice == 5 || indice == 1) {
+                            texto = "";
+                        }
+                    }
                     finProceso(element);
                     break;
                 case 2:
                     break;
                 case 3:
-                    atributos.setEstilo(element.getEstilo().getStyle());
-                    mat.mostrarTexto(element.getEstilo().getTexto(), atributos);
-                    atributos.setEstilo(DEFAULT_STYLE);
+                    mat.mostrarTexto(texto, at);
+                    at.setEstilo(element.getEstilo().getStyle());
+                    mat.mostrarTexto(element.getEstilo().getTexto(), at);
+                    at.setEstilo(DEFAULT_STYLE);
                     texto = "";
-                    System.out.println(element.getEstilo().getTexto());
                     break;
                 case 4:
-                    System.out.println("Linea horizontal");
                     break;
                 case 5:
-                    mat.mostrarTexto(texto, atributos);
-                    texto = "";
-                    System.out.println("<<Parrafo");
-                    System.out.println(element.getParrafo().getAlineacion());
-                    procesarElemento(element.getParrafo().getEtiquetas());
+                    mat.mostrarTexto(texto, at);
+                    try {
+                        Atributos at2 = (Atributos) at.clone();
+                        at2.setAlineacion(element.getParrafo().getAlineacion());
+                        procesarElemento(element.getParrafo().getEtiquetas(), SALTO_LINEA, at2);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                    texto = SALTO_LINEA;
+                    if (element.getSiguienteEtiqueta() != null) {
+                        int indice = element.getSiguienteEtiqueta().getIndice();
+                        if (indice == 5 || indice == 1) {
+                            texto = "";
+                        }
+                    }
                     finProceso(element);
                     break;
                 case 6:
-                    System.out.println("Salto de linea");
+                    texto += SALTO_LINEA;
                     break;
                 case 7:
-                    System.out.println("Sangria");
-                    texto +=  SALTO_LINEA + element.getSangria().getTexto() + SALTO_LINEA;
-                    mat.mostrarTexto(texto, atributos);
+                    texto += SALTO_LINEA + element.getSangria().getTexto() + SALTO_LINEA;
+                    mat.mostrarTexto(texto, at);
                     texto = "";
                     break;
                 case 8:
-                    System.out.println("<Nobr> " + element.getTextoNoLinea().getTexto());
                     texto += element.getTextoNoLinea().getTexto() + ESPACIO;
                     break;
                 case 9:
-                    mat.mostrarTexto(texto, atributos);
+                    mat.mostrarTexto(texto, at);
                     texto = "";
-                    System.out.println("<<Tipo Letra");
-                    System.out.println(element.getTipoLetra().getAlign());
-                    System.out.println(element.getTipoLetra().getColor());
-                    System.out.println(element.getTipoLetra().getFace());
-                    System.out.println(element.getTipoLetra().getSize());
-                    procesarElemento(element.getTipoLetra().getEtiquetas());
+                    try {
+                        Atributos at2 = (Atributos) at.clone();
+                        at2.setAlineacion(element.getTipoLetra().getAlign());
+                        at2.setSize(element.getTipoLetra().getSize());
+                        at2.setTextColor(element.getTipoLetra().getColor());
+                        at2.setFont(element.getTipoLetra().getFace());
+                        procesarElemento(element.getTipoLetra().getEtiquetas(), "", at2);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
                     finProceso(element);
                     break;
                 case 10:
@@ -386,14 +348,16 @@ public class ManejadorParser1 {
             }
             element = element.getSiguienteEtiqueta();
         }
+        mat.mostrarTexto(texto, at);
     }
 
     public void finProceso(Elemento element) {
         switch (element.getIndice()) {
             case 1:
                 System.out.println("<<Fin centrado");
-                if(element.getEtiquetaAnterior() != null)
+                if (element.getEtiquetaAnterior() != null) {
                     System.out.println("Indice anterior: " + element.getEtiquetaAnterior().getIndice());
+                }
                 break;
             case 2:
                 break;
@@ -403,8 +367,9 @@ public class ManejadorParser1 {
                 break;
             case 5:
                 System.out.println("<<Fin Parrafo");
-                if(element.getEtiquetaAnterior() != null)
+                if (element.getEtiquetaAnterior() != null) {
                     System.out.println("Indice anterior: " + element.getEtiquetaAnterior().getIndice());
+                }
                 break;
             case 6:
                 break;
@@ -414,8 +379,9 @@ public class ManejadorParser1 {
                 break;
             case 9:
                 System.out.println("<<Fin Tipo Letra");
-                if(element.getEtiquetaAnterior() != null)
+                if (element.getEtiquetaAnterior() != null) {
                     System.out.println("Indice anterior: " + element.getEtiquetaAnterior().getIndice());
+                }
                 break;
             case 10:
                 break;

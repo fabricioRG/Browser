@@ -45,6 +45,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
         mat = new ManejadorAreaTexto(this);
         navegador.setEditable(false);
         jPanelErrores.setVisible(false); //Panel no visible hasta que se encuentre un error o se llame por aparte
+        sizeLabel.setText(navegador.getPreferredSize().height + " x " + navegador.getPreferredSize().width);
     }
 
     /**
@@ -75,6 +76,8 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
         jScrollPane4 = new javax.swing.JScrollPane();
         navegador = new javax.swing.JTextPane();
         jButton5 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        sizeLabel = new javax.swing.JLabel();
 
         jLabel4.setText("jLabel4");
 
@@ -182,6 +185,10 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
             }
         });
 
+        jLabel5.setText("Size:");
+
+        sizeLabel.setText(" ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -207,14 +214,19 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
                         .addGap(14, 14, 14)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane4)
+                        .addGap(6, 6, 6)
+                        .addComponent(jPanelErrores, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton5)
-                        .addGap(0, 106, Short.MAX_VALUE))
-                    .addComponent(jScrollPane4))
-                .addGap(6, 6, 6)
-                .addComponent(jPanelErrores, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(142, 142, 142)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sizeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                        .addGap(54, 54, 54))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,7 +244,9 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(sizeLabel))
                 .addGap(6, 6, 6))
         );
 
@@ -255,6 +269,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        navegador.setText("");
         mat.runText(interprete.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -354,6 +369,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelColummna;
     private javax.swing.JLabel jLabelLinea;
     private javax.swing.JPanel jPanel1;
@@ -363,6 +379,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
     private javax.swing.JScrollPane jScrollPane4;
     public javax.swing.JTable jTableErrores;
     private javax.swing.JTextPane navegador;
+    private javax.swing.JLabel sizeLabel;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 

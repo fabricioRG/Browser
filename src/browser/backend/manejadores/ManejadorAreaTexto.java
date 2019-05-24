@@ -110,6 +110,7 @@ public class ManejadorAreaTexto {
             setForeground(atributos.getTextColor(), attrs);
             setFontFamily(atributos.getFont(), attrs);
             setFontSize(atributos.getSize(), attrs);
+            setAlignment(atributos.getAlineacion(), attrs);
             at.getNavegador().getStyledDocument().insertString(at.getNavegador().getStyledDocument().getLength(), entrada, attrs);            
 //            at.getNavegador().setText(entrada);
         } catch (Exception e) {
@@ -117,6 +118,23 @@ public class ManejadorAreaTexto {
         }
     }
 
+    public void setAlignment(int align, SimpleAttributeSet attrs){
+        switch(align){
+            case 1:
+                StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_LEFT);
+                break;
+            case 2:
+                StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_RIGHT);
+                break;
+            case 3:
+                StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_CENTER);
+                break;
+            case 4:
+                StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_JUSTIFIED);
+                break;
+        }
+    }
+    
     public void setBackground(Color color, SimpleAttributeSet attrs) {
         StyleConstants.setBackground(attrs, color);
     }
