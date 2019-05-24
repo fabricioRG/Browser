@@ -1,6 +1,7 @@
 package browser.frontend;
 
 import browser.backend.manejadores.ManejadorAreaTexto;
+import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -46,6 +47,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
         navegador.setEditable(false);
         jPanelErrores.setVisible(false); //Panel no visible hasta que se encuentre un error o se llame por aparte
         sizeLabel.setText(navegador.getPreferredSize().height + " x " + navegador.getPreferredSize().width);
+        navegador.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
     }
 
     /**

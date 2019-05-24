@@ -13,8 +13,12 @@ import java.awt.datatransfer.Transferable;
 import java.io.StringReader;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -40,6 +44,11 @@ public class ManejadorAreaTexto {
             parser1 pars = new parser1(lexer, new ManejadorParser1(this));
             try {
                 pars.parse();
+//                SimpleAttributeSet attrs = new SimpleAttributeSet();
+//                setAlignment(3, attrs);
+//                at.getNavegador().setParagraphAttributes(attrs, true);
+//                at.getNavegador().getStyledDocument().insertString(at.getNavegador().getStyledDocument().getLength(), "aadsfasdf\n", attrs);
+//                SimpleAttributeSet attrs2 = new SimpleAttributeSet();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -85,7 +94,7 @@ public class ManejadorAreaTexto {
         // Se inserta
         try {
             SimpleAttributeSet attrs = new SimpleAttributeSet();
-            switch(atributos.getEstilo()){
+            switch (atributos.getEstilo()) {
                 case 0:
                     break;
                 case 1:
@@ -111,15 +120,15 @@ public class ManejadorAreaTexto {
             setFontFamily(atributos.getFont(), attrs);
             setFontSize(atributos.getSize(), attrs);
             setAlignment(atributos.getAlineacion(), attrs);
-            at.getNavegador().getStyledDocument().insertString(at.getNavegador().getStyledDocument().getLength(), entrada, attrs);            
+            at.getNavegador().getStyledDocument().insertString(at.getNavegador().getStyledDocument().getLength(), entrada, attrs);
 //            at.getNavegador().setText(entrada);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void setAlignment(int align, SimpleAttributeSet attrs){
-        switch(align){
+    public void setAlignment(int align, SimpleAttributeSet attrs) {
+        switch (align) {
             case 1:
                 StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_LEFT);
                 break;
@@ -133,8 +142,9 @@ public class ManejadorAreaTexto {
                 StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_JUSTIFIED);
                 break;
         }
+        at.getNavegador().setParagraphAttributes(attrs, true);
     }
-    
+
     public void setBackground(Color color, SimpleAttributeSet attrs) {
         StyleConstants.setBackground(attrs, color);
     }

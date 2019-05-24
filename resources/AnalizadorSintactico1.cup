@@ -43,11 +43,11 @@ terminal String 		GREEN, WHITE, PURPLE, SILVER, YELLOW, AQUA, COLOR;
 non terminal String 	html, head, texto, texto1 , atributos1;
 non terminal String 	palabraReserv, simbolo, size1, codigoEmbebido;
 non terminal String 	title;
-non terminal String 	face1, listaOrdenada, atributosOr, type, type1, star, items;
-non terminal String 	item, listaDesordenada, atributosDe, type2;
+non terminal String 	face1, listaOrdenada, atributosOr, type, type1, star;
+non terminal String 	listaDesordenada, atributosDe, type2;
 non terminal Integer 	alignAux, align1, alignAux1, atributosPa;
 non terminal Color 		color, bgcolor, link, text, color1;
-non terminal Elemento 	body1, elemento1, elementoRsv, elementoSimple;
+non terminal Elemento 	body1, elemento1, elementoRsv, elementoSimple, item, items;
 non terminal Centrado 	centrado;
 non terminal Parrafo 	parrafo;
 non terminal TipoLetra 	tipoLetra;
@@ -209,8 +209,8 @@ atributosLine2 ::=	align1:e {:RESULT = new LineaHorizontal(e, 0, 0, 0);:}
 align1 ::= 			ALIGN SIGNO_IGUAL alignAux:e {:RESULT = e;:}
 					;
 
-alignAux ::= 		RIGHT:e {:RESULT = 1;:}
-					|LEFT:e {:RESULT = 2;:}
+alignAux ::= 		RIGHT:e {:RESULT = 2;:}
+					|LEFT:e {:RESULT = 1;:}
 					| CENTER:e {:RESULT = 3;:}
 					;
 
@@ -302,7 +302,7 @@ items ::= 			items item
 					| item
 					;
 
-item ::= 			ITEM elemento1
+item ::= 			ITEM elemento1:e {:RESULT = e;:}
 					;
 
 listaDesordenada ::=LIST_DES_AB atributosDe CIERRE items LIST_DES_CE

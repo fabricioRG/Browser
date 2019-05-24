@@ -17,9 +17,10 @@ public class ManejadorParser1 {
     public static int INICIO_SUBSTRING = 1;
     public static int DEFAULT_STYLE = 0;
     public static int FIN_SUBSTRING = 7;
-    public static int DEFAULT_ALIGN = 2;
+    public static int DEFAULT_ALIGN = 1;
     public static int DEFAULT_WIDTH_PIXEL = 10;
     public static int DEFAULT_SIZE = 15;
+    public static String TABULADOR = "\t";
     public static Color DEFAULT_TEXT_COLOR = Color.BLACK;
     public static Color DEFAULT_BG_COLOR = Color.WHITE;
     public static String DEFAULT_FONT = "Noto Sans";
@@ -269,12 +270,21 @@ public class ManejadorParser1 {
         while (element != null) {
             switch (element.getIndice()) {
                 case 1:
+                    if (!texto.isEmpty()) {
+                        texto += "\n";
+                    } 
+//                    else if (element.getEtiquetaAnterior() != null) {
+//                        int ind = element.getEtiquetaAnterior().getIndice();
+//                        if (ind == 5 || ind == 1) {
+//                            texto += "\n";
+//                        }
+//                    }
                     mat.mostrarTexto(texto, at);
                     texto = "";
                     try {
                         Atributos at2 = (Atributos) at.clone();
                         at2.setAlineacion(3);
-                        procesarElemento(element.getCentrado().getEtiquetas(), SALTO_LINEA, at2);
+                        procesarElemento(element.getCentrado().getEtiquetas(), "", at2);
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                     }
@@ -298,11 +308,14 @@ public class ManejadorParser1 {
                 case 4:
                     break;
                 case 5:
+                    if (!texto.isEmpty()) {
+                        texto += "\n";
+                    } 
                     mat.mostrarTexto(texto, at);
                     try {
                         Atributos at2 = (Atributos) at.clone();
                         at2.setAlineacion(element.getParrafo().getAlineacion());
-                        procesarElemento(element.getParrafo().getEtiquetas(), SALTO_LINEA, at2);
+                        procesarElemento(element.getParrafo().getEtiquetas(), "", at2);
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                     }
@@ -319,8 +332,12 @@ public class ManejadorParser1 {
                     texto += SALTO_LINEA;
                     break;
                 case 7:
-                    texto += SALTO_LINEA + element.getSangria().getTexto() + SALTO_LINEA;
+                    if (!texto.isEmpty()) {
+                        texto += "\n";
+                    }
                     mat.mostrarTexto(texto, at);
+                    at.setAlineacion(DEFAULT_ALIGN);
+                    mat.mostrarTexto(element.getSangria().getTexto() + SALTO_LINEA, at);
                     texto = "";
                     break;
                 case 8:
@@ -348,7 +365,7 @@ public class ManejadorParser1 {
             }
             element = element.getSiguienteEtiqueta();
         }
-        mat.mostrarTexto(texto, at);
+        mat.mostrarTexto(texto + SALTO_LINEA, at);
     }
 
     public void finProceso(Elemento element) {

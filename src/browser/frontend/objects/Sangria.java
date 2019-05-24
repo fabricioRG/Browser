@@ -6,10 +6,11 @@ package browser.frontend.objects;
  */
 public class Sangria {
     
+    public static String TAB = "\t";
     private String texto;
 
     public Sangria(String texto) {
-        this.texto = texto;
+        this.texto = TAB + texto;
     }
 
     public String getTexto() {
