@@ -145,7 +145,7 @@ color ::= 			HEXADECIMAL:e {:RESULT = mp.getColor(e);:}
 					| LIME {:RESULT = mp.decodeColor("#bfff00");:}
 					| FUCHSIA {:RESULT = mp.decodeColor("#ca2c92");:}
 					| GREEN {:RESULT = mp.decodeColor("#00ff00");:}
-					| WHITE {:RESULT = mp.decodeColor("#0000ff");:}
+					| WHITE {:RESULT = mp.decodeColor("#ffffff");:}
 					| PURPLE {:RESULT = mp.decodeColor("#800080");:}
 					| SILVER {:RESULT = mp.decodeColor("#c0c0c0");:}
 					| YELLOW {:RESULT = mp.decodeColor("#ffff00");:}

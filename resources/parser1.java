@@ -2151,7 +2151,7 @@ class CUP$parser1$actions {
           case 60: // color ::= WHITE 
             {
               Color RESULT =null;
-		RESULT = mp.decodeColor("#0000ff");
+		RESULT = mp.decodeColor("#ffffff");
               CUP$parser1$result = parser.getSymbolFactory().newSymbol("color",25, ((java_cup.runtime.Symbol)CUP$parser1$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser1$stack.peek()), RESULT);
             }
           return CUP$parser1$result;
