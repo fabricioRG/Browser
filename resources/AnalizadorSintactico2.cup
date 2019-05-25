@@ -28,143 +28,121 @@ terminal String 		AND, OR, IF, THEN, ELSE, WHILE, FOR, TO, PRINT;
 terminal String 		PAR_AB, PAR_CE, COR_AB, COR_CE, ASIGNACION, DOS_PUNTOS;
 terminal String 		PUNTO_COMA, COMA, END, BEGIN, VAR, NUMERO, VARIABLE, TEXTO;
 
-non terminal String 	main, varDecla;
-non terminal String 	opAritmetica, opRelacional, opLogica, condicional;
-non terminal String 	tipoVar, op1, op2, op3, relacional1, logica1, logica2, condicion;
-non terminal String 	tokens, token1, token2, expresion;
-non terminal Elemento 	elemento1, elemento;
+non terminal String 	main, booleano;
+non terminal String 	operacion;
+non terminal Operacion 	expresion, condicion;
+non terminal Token 		tokens, token1, token2;
+non terminal Integer 	tipoVar;
+non terminal Elemento 	elemento1, elemento, varDecla, operaciones, condicional;
+non terminal Elemento 	cicloFor, cicloWhile, print, asignacion;
 non terminal Bloque 	bloque1, bloque2, bloque;
-non terminal Asignacion asignacion;
-non terminal CicloFor 	cicloFor;
-non terminal CicloWhile cicloWhile;
-non terminal Print 		print;
 
 
 
 precedence left 		MENOS, MAS;
 precedence left 		MULTIPLICACION, DIVISION;
-precedence left 		OR;
-precedence left 		AND;
+precedence left 		AND, OR;
+precedence left 		IGUAL_QUE, DIFERENTE_QUE;
+precedence left 		MAYOR_IGUAL, MENOR_IGUAL;
+precedence left 		MENOR_QUE, MAYOR_QUE;
+precedence left 		MAS, MENOS;
+precedence left 		MULTIPLICACION, DIVISION;
 
 start with main;
 
 /* INICIO GRAMATICA DE -----MAIN----- */
 
-main ::= 			elemento1
+main ::= 			elemento1:e {:mp.procesar(e);:}
 					;
 
-elemento1 ::= 		elemento1 elemento
-					| elemento
+elemento1 ::= 		elemento1:e1 elemento:e2 {:RESULT = mp.getElemento(e1, e2);:}
+					| elemento:e {:RESULT = e;:}
 					;
 
-elemento ::= 		varDecla
-					| opAritmetica
-					| opRelacional
-					| opLogica
-					| condicional
-					| cicloFor
-					| cicloWhile
-					| print
-					| asignacion
+elemento ::= 		varDecla:e {:RESULT = e;:}
+					| operaciones:e {:RESULT = e;:}
+					| condicional:e {:RESULT = e;:}
+					| cicloFor:e {:RESULT = e;:}
+					| cicloWhile:e {:RESULT = e;:}
+					| print:e {:RESULT = e;:}
+					| asignacion:e {:RESULT = e;:}
 					;
 
-varDecla ::= 		VAR VARIABLE DOS_PUNTOS tipoVar PUNTO_COMA
+operaciones ::= 	operacion:e {:RESULT = mp.setOperacion(e);:}
 					;
 
-tipoVar ::= 		INTEGER
-					| BOOLEAN
-					| STRING
+varDecla ::= 		VAR VARIABLE:e1 DOS_PUNTOS tipoVar:e2 PUNTO_COMA {:RESULT = mp.setVariables(e1, e2);:}
 					;
 
-opAritmetica ::= 	op1
+tipoVar ::= 		INTEGER {:RESULT = 2;:}
+					| BOOLEAN {:RESULT = 3;:}
+					| STRING {:RESULT = 1;:}
 					;
 
-op1 ::= 			op1 MAS op2
-					| op1 MENOS op2
-					| op2
+operacion ::=		operacion:e1 MAS:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MENOS:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MULTIPLICACION:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 DIVISION:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MENOR_QUE:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MAYOR_QUE:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MAYOR_IGUAL:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 MENOR_IGUAL:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 IGUAL_QUE:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 DIFERENTE_QUE:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 OR:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| operacion:e1 AND:e2 operacion:e3 {:RESULT = e1 + e2 + e3;:}
+					| PAR_AB:e1 operacion:e2 PAR_CE:e3	{:RESULT = e1 + e2 + e3;:}
+					| NUMERO:e {:RESULT = e;:}
+					| TEXTO:e {:RESULT = e;:}
+					| VARIABLE:e {:RESULT = e;:}
+					| booleano:e {:RESULT = e;:}
 					;
 
-op2 ::= 			op2 MULTIPLICACION op3
-					| op2 DIVISION op3
-					| op3
+booleano ::= 		TRUE:e {:RESULT = e;:}
+					| FALSE:e {:RESULT = e;:}
 					;
 
-op3 ::= 			PAR_AB op1 PAR_CE
-					| NUMERO
-					| VARIABLE
-					| TEXTO
+condicional ::= 	IF condicion:e1 THEN bloque1:e2 ELSE bloque2:e3 {:RESULT = mp.setCondicional(e1, e2, e3);:}
 					;
 
-opRelacional ::= 	relacional1 MAYOR_QUE relacional1
-					| relacional1 MENOR_QUE relacional1
-					| relacional1 MAYOR_IGUAL relacional1
-					| relacional1 MENOR_IGUAL relacional1
-					| relacional1 IGUAL_QUE relacional1
-					| relacional1 DIFERENTE_QUE relacional1
+condicion ::= 		operacion:e {:RESULT = mp.setCondicion(e);:}
 					;
 
-relacional1 ::= 	opAritmetica
+bloque1 ::= 		bloque:e {:RESULT = e;:}
 					;
 
-opLogica ::= 		opLogica OR logica1
-					| opLogica AND logica1
-					;					
-
-logica1 ::= 		logica1 OR logica2
-					| logica1 AND logica2
-					| logica2
+bloque2 ::= 		bloque:e {:RESULT = e;:}
 					;
 
-logica2 ::= 		opRelacional
-					| TRUE
-					| FALSE
-					| VARIABLE
+bloque ::= 			BEGIN COR_AB elemento1:e COR_CE END PUNTO_COMA {:RESULT = mp.setBloque(e);:}
+					| elemento:e {:RESULT = mp.setBloque(e);:}
 					;
 
-condicional ::= 	IF condicion THEN bloque1 ELSE bloque2
+cicloFor ::= 		FOR VARIABLE:e1 ASIGNACION NUMERO:e2 TO NUMERO:e3 bloque:e4 {:RESULT = mp.setCicloFor(e1, e2, e3, e4);:}
 					;
 
-condicion ::= 		opLogica
-					| opRelacional
-					| TRUE
-					| FALSE
+cicloWhile ::= 		WHILE condicion:e1 bloque:e2 {:RESULT = mp.setCicloWhile(e1, e2);:}
 					;
 
-bloque1 ::= 		bloque
+print ::= 			PRINT PAR_AB tokens:e PAR_CE PUNTO_COMA {:RESULT = mp.setPrint(e);:}
 					;
 
-bloque2 ::= 		bloque
+tokens ::= 			token1:e1 token2:e2 {:RESULT = mp.addToken(e1, e2);:}
+					| token2:e {:RESULT = e;:}
 					;
 
-bloque ::= 			BEGIN COR_AB elemento1 COR_CE END PUNTO_COMA
-					| elemento
+token1 ::= 			token1:e1 token2:e2 COMA {:RESULT = mp.addToken(e1, e2);:}
+					| token2:e COMA {:RESULT = e;:}
 					;
 
-cicloFor ::= 		FOR VARIABLE ASIGNACION NUMERO TO NUMERO bloque
+token2 ::= 			TEXTO:e {:RESULT = mp.setToken(e, null);:}
+					| VARIABLE:e {:RESULT = mp.setToken(null, e);:}
 					;
 
-cicloWhile ::= 		WHILE condicion bloque
+asignacion ::= 		VARIABLE:e1 ASIGNACION expresion:e2 PUNTO_COMA {:RESULT = mp.setAsignacion(e1, e2);:}
 					;
 
-print ::= 			PRINT PAR_AB tokens PAR_CE PUNTO_COMA
-					;
-
-tokens ::= 			token1 token2
-					| token2 
-					;
-
-token1 ::= 			token1 token2 COMA
-					| token2 COMA
-					;
-
-token2 ::= 			TEXTO
-					| VARIABLE
-					;
-
-asignacion ::= 		VARIABLE ASIGNACION expresion PUNTO_COMA
-					;
-
-expresion ::= 		opAritmetica
+expresion ::= 		operacion:e {:RESULT = mp.setCondicion(e);:}
 					; 
 
 

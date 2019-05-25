@@ -27,14 +27,17 @@ public class ManejadorParser1 {
     public static String SALTO_LINEA = "\n";
     public static String ESPACIO = " ";
     private ManejadorAreaTexto mat = null;
+    private Body body1 = null;
     private TipoLetra tipoLetraDefault = null;
     private Atributos atributos = null;
+    private ManejadorParser2 mp = null;
     private Color colorLink = DEFAULT_TEXT_COLOR;
 
     public ManejadorParser1(ManejadorAreaTexto mat) {
         this.mat = mat;
         atributos = new Atributos(DEFAULT_ALIGN, DEFAULT_STYLE, DEFAULT_BG_COLOR,
                 DEFAULT_TEXT_COLOR, DEFAULT_TEXT_COLOR, DEFAULT_SIZE, DEFAULT_FONT);
+        this.mp = new ManejadorParser2();
     }
 
     public Color getColor(String color) {
@@ -256,12 +259,16 @@ public class ManejadorParser1 {
 
     public void procesarBody(Body body) {
         Elemento element = body.getEtiquetas();
-        mat.getAt().getNavegador().setBackground(body.getBgColor());
-        atributos.setBgColor(body.getBgColor());
-        mat.getAt().getNavegador().setForeground(body.getText());
-        atributos.setTextColor(body.getText());
-        colorLink = body.getLink();
-        procesarElemento(element, "", atributos);
+        if (mat != null) {
+            mat.getAt().getNavegador().setBackground(body.getBgColor());
+            atributos.setBgColor(body.getBgColor());
+            mat.getAt().getNavegador().setForeground(body.getText());
+            atributos.setTextColor(body.getText());
+            colorLink = body.getLink();
+            procesarElemento(element, "", atributos);
+        } else {
+            this.body1 = body;
+        }
     }
 
     public void procesarElemento(Elemento elemento, String text, Atributos at) {
@@ -272,7 +279,7 @@ public class ManejadorParser1 {
                 case 1:
                     if (!texto.isEmpty()) {
                         texto += "\n";
-                    } 
+                    }
 //                    else if (element.getEtiquetaAnterior() != null) {
 //                        int ind = element.getEtiquetaAnterior().getIndice();
 //                        if (ind == 5 || ind == 1) {
@@ -310,7 +317,7 @@ public class ManejadorParser1 {
                 case 5:
                     if (!texto.isEmpty()) {
                         texto += "\n";
-                    } 
+                    }
                     mat.mostrarTexto(texto, at);
                     try {
                         Atributos at2 = (Atributos) at.clone();
@@ -405,19 +412,35 @@ public class ManejadorParser1 {
         }
     }
 
-    public void runEmbebido(String texto) {
+    public Elemento getEmbebido(Elemento elemento) {
+        if (elemento != null) {
+            return elemento;
+        } else {
+            return new ElementoBuilder().texto("").build();
+        }
+    }
+
+    public Elemento runEmbebido(String texto) {
         String entrada = texto.substring(2, texto.length() - 2);
-        System.out.println(entrada);
         if (!entrada.trim().isEmpty()) {
             StringReader sr = new StringReader(entrada);
             Lexer2 lexer = new Lexer2(sr);
-            parser2 pars = new parser2(lexer, new ManejadorParser2());
+            parser2 pars = new parser2(lexer, this.mp);
             try {
                 pars.parse();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return mp.getElemen();
+    }
+
+    public Body getBody1() {
+        return body1;
+    }
+
+    public void setBody1(Body body1) {
+        this.body1 = body1;
     }
 
 }

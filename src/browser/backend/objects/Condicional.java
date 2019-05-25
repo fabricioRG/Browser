@@ -6,21 +6,21 @@ package browser.backend.objects;
  */
 public class Condicional {
 
-    private boolean condicion;
+    private Operacion condicion;
     private Bloque bloque1;
     private Bloque bloque2;
 
-    public Condicional(boolean condicion, Bloque bloque1, Bloque bloque2) {
+    public Condicional(Operacion condicion, Bloque bloque1, Bloque bloque2) {
         this.condicion = condicion;
         this.bloque1 = bloque1;
         this.bloque2 = bloque2;
     }
 
-    public boolean isCondicion() {
+    public Operacion getCondicion() {
         return condicion;
     }
 
-    public void setCondicion(boolean condicion) {
+    public void setCondicion(Operacion condicion) {
         this.condicion = condicion;
     }
 

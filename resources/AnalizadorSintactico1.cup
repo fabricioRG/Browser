@@ -41,13 +41,13 @@ terminal String 		BLACK, OLIVE, TEAL, RED, BLUE, MAROON, NAVY, GRAY, LIME, FUCHS
 terminal String 		GREEN, WHITE, PURPLE, SILVER, YELLOW, AQUA, COLOR;
 
 non terminal String 	html, head, texto, texto1 , atributos1;
-non terminal String 	palabraReserv, simbolo, size1, codigoEmbebido;
+non terminal String 	palabraReserv, simbolo, size1;
 non terminal String 	title;
 non terminal String 	face1, listaOrdenada, atributosOr, type, type1, star;
 non terminal String 	listaDesordenada, atributosDe, type2;
 non terminal Integer 	alignAux, align1, alignAux1, atributosPa;
 non terminal Color 		color, bgcolor, link, text, color1;
-non terminal Elemento 	body1, elemento1, elementoRsv, elementoSimple, item, items;
+non terminal Elemento 	body1, elemento1, elementoRsv, elementoSimple, item, items, codigoEmbebido;
 non terminal Centrado 	centrado;
 non terminal Parrafo 	parrafo;
 non terminal TipoLetra 	tipoLetra;
@@ -78,6 +78,7 @@ title ::= 			TITLE_AB texto1 TITLE_CE
 
 texto ::=			TEXTO_PLANO:e {:RESULT = e;:}
 					| palabraReserv:e {:RESULT = e;:}
+					| simbolo:e {:RESULT = e;:}
 					;
 
 texto1 ::= 			texto1:e1 texto:e2 {:RESULT = e1 + " " + e2;:}
@@ -172,10 +173,9 @@ elementoSimple ::= 	estilo:e {:RESULT = mp.setEstilo(e);:}
 					| textoNoLinea:e {:RESULT = mp.setTextoNoLinea(e);:}
 					| lineaHorizontal:e {:RESULT = mp.setLineaHorizontal(e);:}
 					| texto:e {:RESULT = mp.setTexto(e);:}
-					| simbolo:e {:RESULT = mp.setTexto(e);:}
 					| sangria:e {:RESULT = mp.setSangria(e);:}
 					| enlaces:e {:RESULT = mp.setEnlace(e);:}
-					| codigoEmbebido:e
+					| codigoEmbebido:e {:RESULT = mp.getEmbebido(e);:}
 					;
 
 estilo ::= 			NEGRILLA_AB texto1:e NEGRILLA_CE {:RESULT = mp.getEstilo(1, e);:}
@@ -233,6 +233,7 @@ widthAux ::= 		TAMANO:e {:RESULT = mp.getLineaHorizontal(1, e);:}
 					;
 
 size1 ::= 			SIZE SIGNO_IGUAL TAMANO:e {:RESULT = e;:}
+					| SIZE SIGNO_IGUAL ENTERO_UNO:e {:RESULT = e;:}
 					;
 
 sangria ::= 		SANGRIA_AB texto1:e SANGRIA_CE {:RESULT = mp.getSangria(e);:}
@@ -317,5 +318,5 @@ type2 ::= 			CIRCLE
 					| DISC
 					;
 
-codigoEmbebido ::= 	CODIGO_EMBEBIDO:e {:mp.runEmbebido(e);:}
+codigoEmbebido ::= 	CODIGO_EMBEBIDO:e {:RESULT = mp.runEmbebido(e);:}
 					;

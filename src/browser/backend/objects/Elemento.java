@@ -7,12 +7,15 @@ package browser.backend.objects;
 public class Elemento {
 
     private int indice;
-    private Condicional condicional;
-    private Asignacion asignacion;
-    private Print print;
-    private CicloFor cicloFor;
-    private CicloWhile cicloWhile;
+    private Condicional condicional;// 1
+    private Asignacion asignacion;// 2
+    private Print print;// 3
+    private CicloFor cicloFor;// 4
+    private CicloWhile cicloWhile;// 5
+    private Variable variable; // 6
+    private Operacion operacion;// 7
     private Elemento siguienteElemento;
+    private Elemento elementoAnterior;
 
     public Elemento(Condicional condicional) {
         this.indice = 1;
@@ -37,6 +40,40 @@ public class Elemento {
     public Elemento(CicloWhile cicloWhile) {
         this.indice = 5;
         this.cicloWhile = cicloWhile;
+    }
+
+    public Elemento(Variable variable) {
+        this.indice = 6;
+        this.variable = variable;
+    }
+    
+    public Elemento(Operacion operacion) {
+        this.indice = 7;
+        this.operacion = operacion;
+    }
+
+    public Operacion getOperacion() {
+        return operacion;
+    }
+
+    public void setOperacion(Operacion operacion) {
+        this.operacion = operacion;
+    }
+
+    public Variable getVariable() {
+        return variable;
+    }
+
+    public void setVariable(Variable variable) {
+        this.variable = variable;
+    }
+
+    public Elemento getElementoAnterior() {
+        return elementoAnterior;
+    }
+
+    public void setElementoAnterior(Elemento elementoAnterior) {
+        this.elementoAnterior = elementoAnterior;
     }
 
     public int getIndice() {

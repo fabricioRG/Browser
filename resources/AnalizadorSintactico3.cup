@@ -1,0 +1,114 @@
+package browser.backend.analizadores;
+
+import java_cup.runtime.*;
+import browser.backend.analizadores.*;
+import browser.backend.manejadores.*;
+import browser.backend.objects.*;
+
+parser code {:
+
+	private ManejadorParser2 mp = null;
+
+	// Connect this parser to a scanner!
+	public parser3(Lexer2 lex, ManejadorParser2 mp) {
+		super(lex);
+		this.mp = mp;
+	}
+
+        public void syntax_error(Symbol s) {
+            System.out.println("Error R de sintaxis: "+ s.value +" Linea "+(s.left)+" columna "+(s.right));
+        }
+
+:}
+
+terminal String         INTEGER, BOOLEAN, STRING, TRUE, FALSE, MAS, MENOS;
+terminal String 		MULTIPLICACION, DIVISION, MAYOR_QUE, MENOR_QUE;
+terminal String 		MAYOR_IGUAL, MENOR_IGUAL, DIFERENTE_QUE, IGUAL_QUE;
+terminal String 		AND, OR, IF, THEN, ELSE, WHILE, FOR, TO, PRINT;
+terminal String 		PAR_AB, PAR_CE, COR_AB, COR_CE, ASIGNACION, DOS_PUNTOS;
+terminal String 		PUNTO_COMA, COMA, END, BEGIN, VAR, NUMERO, VARIABLE, TEXTO;
+
+non terminal String 	main;
+non terminal Integer 	booleano;
+non terminal Variable 	operacion, operaciones;
+non terminal Operacion 	expresion, condicion;
+non terminal Token 		tokens, token1, token2;
+non terminal Integer 	tipoVar;
+non terminal Elemento 	elemento1, elemento, varDecla, condicional;
+non terminal Elemento 	cicloFor, cicloWhile, print, asignacion;
+non terminal Bloque 	bloque1, bloque2, bloque;
+
+
+
+precedence left 		MENOS, MAS;
+precedence left 		MULTIPLICACION, DIVISION;
+precedence left 		AND, OR;
+precedence left 		IGUAL_QUE, DIFERENTE_QUE;
+precedence left 		MAYOR_IGUAL, MENOR_IGUAL;
+precedence left 		MENOR_QUE, MAYOR_QUE;
+precedence left 		MAS, MENOS;
+precedence left 		MULTIPLICACION, DIVISION;
+
+start with main;
+
+/* INICIO GRAMATICA DE -----MAIN----- */
+
+main ::= 			operaciones:e {:mp.setVariableValue(e);:}
+					;
+
+operaciones ::= 	operacion:e {:RESULT = e;:}
+					;
+
+operacion ::=		operacion:e1 MAS:e2 operacion:e3 {:RESULT = mp.getOperacionAritmetica(e1, e3, 1);:}
+					| operacion:e1 MENOS:e2 operacion:e3 {:RESULT = mp.getOperacionAritmetica(e1, e3, 2);:}
+					| operacion:e1 MULTIPLICACION:e2 operacion:e3 {:RESULT = mp.getOperacionAritmetica(e1, e3, 3);:}
+					| operacion:e1 DIVISION:e2 operacion:e3 {:RESULT = mp.getOperacionAritmetica(e1, e3, 4);:}
+					| operacion:e1 MENOR_QUE:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 1);:}
+					| operacion:e1 MAYOR_QUE:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 2);:}
+					| operacion:e1 MAYOR_IGUAL:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 3);:}
+					| operacion:e1 MENOR_IGUAL:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 4);:}
+					| operacion:e1 IGUAL_QUE:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 5);:}
+					| operacion:e1 DIFERENTE_QUE:e2 operacion:e3 {:RESULT = mp.getOperacionRelacional(e1, e3, 6);:}
+					| operacion:e1 OR:e2 operacion:e3 {:RESULT = mp.getOperacionLogica(e1, e3, 1);:}
+					| operacion:e1 AND:e2 operacion:e3 {:RESULT = mp.getOperacionLogica(e1, e3, 2);:}
+					| PAR_AB:e1 operacion:e2 PAR_CE:e3	{:RESULT = e2;:}
+					| NUMERO:e {:RESULT = mp.setNumero(e);:}
+					| TEXTO:e {:RESULT = mp.setVariable(e, 1);:}
+					| VARIABLE:e {:RESULT = mp.getVariable(e);:}
+					| booleano:e {:RESULT = mp.setBoolean(e);:}
+					;
+
+booleano ::= 		TRUE:e {:RESULT = 1;:}
+					| FALSE:e {:RESULT = 2;:}
+					;
+
+/*
+<html>
+<body>
+<%
+IF (10 > 4) THEN
+BEGIN [PRINT('ALGO')] END;
+%>
+</body>
+</html>
+
+<html>
+<body>
+<%
+VAR i: INTEGER;
+i := 100;
+PRINT('<font size = "',i,'">Letra tamaño ',i,'</font><br>');
+%>
+</body>
+</html>
+
+<html>
+<body>
+<%
+VAR i: STRING;
+i := 'Texto de de ejemplo';
+PRINT('<font size = "',i,'">Letra tamaño ',i,'</font><br>');
+%>
+</body>
+</html>
+*/

@@ -11,23 +11,19 @@ public class Asignacion {
     private int valor;
     private String cadena;
     private boolean bool;
+    private Operacion operacion;
 
-    public Asignacion(Variable variable, int valor) {
-        this.indice = 1;
+    public Asignacion(Variable variable, Operacion operacion) {
         this.variable = variable;
-        this.valor = valor;
+        this.operacion = operacion;
     }
 
-    public Asignacion(Variable variable, String cadena) {
-        this.indice = 2;
-        this.variable = variable;
-        this.cadena = cadena;
+    public Operacion getOperacion() {
+        return operacion;
     }
 
-    public Asignacion(Variable variable, boolean bool) {
-        this.indice = 3;
-        this.variable = variable;
-        this.bool = bool;
+    public void setOperacion(Operacion operacion) {
+        this.operacion = operacion;
     }
 
     public int getIndice() {

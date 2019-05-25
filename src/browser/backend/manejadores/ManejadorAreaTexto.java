@@ -48,7 +48,6 @@ public class ManejadorAreaTexto {
 //                setAlignment(3, attrs);
 //                at.getNavegador().setParagraphAttributes(attrs, true);
 //                at.getNavegador().getStyledDocument().insertString(at.getNavegador().getStyledDocument().getLength(), "aadsfasdf\n", attrs);
-//                SimpleAttributeSet attrs2 = new SimpleAttributeSet();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -6,20 +6,20 @@ package browser.backend.objects;
  */
 public class CicloWhile {
 
-    private Condicional condicional;
+    private Operacion condicion;
     private Bloque bloquer;    
 
-    public CicloWhile(Condicional condicional, Bloque bloquer) {
-        this.condicional = condicional;
+    public CicloWhile(Operacion condicion, Bloque bloquer) {
+        this.condicion = condicion;
         this.bloquer = bloquer;
     }
 
-    public Condicional getCondicional() {
-        return condicional;
+    public Operacion getCondicion() {
+        return condicion;
     }
 
-    public void setCondicional(Condicional condicional) {
-        this.condicional = condicional;
+    public void setCondicion(Operacion condicion) {
+        this.condicion = condicion;
     }
 
     public Bloque getBloquer() {
